@@ -1,4 +1,4 @@
-# Distributed URL Shortener – LinkForge
+# Distributed URL Shortener
 
 A scalable, modular, and distributed-style URL shortening system built using Spring Boot. Designed for high-read traffic, sharded database storage, and extensible microservice components.
 
@@ -25,7 +25,7 @@ distributed-url-shortener/
 - **Spring Boot 3.2**
 - **Spring Data JPA**
 - **Redis** (read-heavy caching)
-- **PostgreSQL** (sharded storage)
+- **PostgreSQL** 
 - **Spring Cloud Gateway**
 - **Docker + Docker Compose**
 - **Swagger / OpenAPI**
@@ -65,11 +65,11 @@ cd redirect-api && ./mvnw spring-boot:run
 
 ```
 
-4. 
-Visit Swagger UI:
-
+4. Visit Swagger UI:
+```
 http://localhost:8081/swagger-ui.html (shorten)
-http://localhost:8082/swagger-ui.html (redirect)```
+http://localhost:8082/swagger-ui.html (redirect)
+```
 
 ## 📚 Documentation
 - [System Design Overview](docs/SYSTEM_DESIGN.md)
