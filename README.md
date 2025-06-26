@@ -72,7 +72,7 @@ http://localhost:8082/swagger-ui.html (redirect)
 ```
 
 ## 📚 Documentation
-- [System Design Overview](docs/SYSTEM_DESIGN.md)
+- [System Design Overview](docs/system-design.md)
 ---
 
 ## 📌 Author

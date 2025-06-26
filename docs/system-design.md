@@ -61,20 +61,8 @@ A distributed, read-optimized URL shortening system using Spring Boot microservi
 | API        | Spring Boot          |
 | Gateway    | Spring Cloud Gateway |
 | Caching    | Redis                |
-| DB         | PostgreSQL (sharded) |
+| DB         | MySQL (sharded) |
 | Infra      | Docker / Compose     |
 | Metrics    | Spring Actuator      |
 
 
-## 8. Future Enhancements
-
-- Add analytics 
-- Custom aliases support
-- Kafka-based event logging
-- Frontend dashboard
-
-## 9. Author
-
-Ng Feng Long (Zell)  
-🔗 https://withzell.com  
-🐙 https://github.com/ngfenglong
