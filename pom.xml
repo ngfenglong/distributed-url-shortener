@@ -13,7 +13,7 @@
 	<artifactId>url-shortener</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>url-shortener</name>
-	<description>Demo project for url shortener</description>
+	<description>Demo project for distributed url shortener</description>
 
 
 	<properties>

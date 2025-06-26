@@ -11,8 +11,8 @@ distributed-url-shortener/
 ├── shorten-api/ # REST API to shorten URLs
 ├── redirect-api/ # Optimized redirect service (GET /r/{shortId})
 ├── id-generator/ # Pluggable ID generation logic (Base62, Snowflake)
-├── gateway/ # Spring Cloud Gateway to route requests
-├── docker/ # Redis, Postgres shards, Docker Compose
+├── gateway-server/ # Spring Cloud Gateway to route requests
+├── docker/ #  Docker Compose
 └── README.md
 ```
 
