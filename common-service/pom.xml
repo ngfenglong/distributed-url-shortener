@@ -9,23 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.zell.dev</groupId>
-	<artifactId>redirect-api</artifactId>
+	<artifactId>common-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>redirect-api</name>
-	<description>Demo project to be responsible for resolving short URLs into original long URLs. Prioritizes cache lookup, with fallback to the database.</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<name>common-service</name>
+	<description>Demo project that contains shared infra and logic shared across services</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -34,17 +21,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -77,18 +54,18 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>com.google.cloud.tools</groupId>
-				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.5</version>
-				<configuration>
-					<to>
-						<image>zell1502/${project.artifactId}:s1</image>
-					</to>
-				</configuration>
-			</plugin>
-			<plugin>
+
+
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

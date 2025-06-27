@@ -12,7 +12,7 @@
 	<artifactId>common-lib</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>common-lib</name>
-	<description>Demo project that contains shared infrastructure components and configuration</description>
+	<description>Demo project that contains shared definitions</description>
 	<url/>
 	<licenses>
 		<license/>
