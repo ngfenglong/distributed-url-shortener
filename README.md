@@ -7,12 +7,12 @@ A scalable, modular, and distributed-style URL shortening system built using Spr
 ## 📦 Project Structure
 ```
 distributed-url-shortener/
-├── common-lib/ # Shared utils (Base62, models, exceptions)
+├── common-lib/ # Shared entity models, utils (Base62, ID generator)
+├── common-service/ # Shared infrastructure beans (shard resolver, Redis, DataSource configs)
 ├── shorten-api/ # REST API to shorten URLs
 ├── redirect-api/ # Optimized redirect service (GET /r/{shortId})
-├── id-generator/ # Pluggable ID generation logic (Base62, Snowflake)
 ├── gateway-server/ # Spring Cloud Gateway to route requests
-├── docker/ #  Docker Compose
+├── docker/ # Docker Compose environment (Redis + MySQL shards)
 └── README.md
 ```
 
@@ -25,7 +25,7 @@ distributed-url-shortener/
 - **Spring Boot 3.2**
 - **Spring Data JPA**
 - **Redis** (read-heavy caching)
-- **PostgreSQL** 
+- **MySQL** (sharded)
 - **Spring Cloud Gateway**
 - **Docker + Docker Compose**
 - **Swagger / OpenAPI**
@@ -33,13 +33,13 @@ distributed-url-shortener/
 ---
 
 ## 🚀 Features
-
 - Shorten long URLs via `POST /shorten`
 - Fast redirection via `GET /r/{shortId}` with Redis optimization
-- ID generator module (custom Base62 / Snowflake-ready)
 - Modular microservices with independent scaling
-- Supports database sharding for horizontal scaling
-- Health checks and metrics with Spring Actuator
+- Centralized ID generation logic (timestamp-based, extensible to Snowflake)
+- Database sharding with shard resolver abstraction
+- Redis caching with TTL + LRU
+- Health checks and observability with Spring Actuator
 
 ---
 

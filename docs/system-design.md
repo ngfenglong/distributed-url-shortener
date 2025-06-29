@@ -24,12 +24,20 @@ A distributed, read-optimized URL shortening system using Spring Boot microservi
 - Read-only DB access
 
 ### 3.4 ID Generator
-- Generates unique short IDs using Base62 encoding
-- **Scalable design**: In the future, this can be upgraded to use Snowflake or similar ID generation algorithms to ensure distributed uniqueness.
+- ID generation logic is located in the `common-lib` module
+- Uses a **timestamp-based strategy** with sequence counter to prevent collisions
+- Designed to be simple and robust for single-instance generation
+- Can be extended to Redis-backed counters or Snowflake if needed
+- **Scalable design**: In the future, this can be upgraded to use Snowflake or similar distributed ID generation algorithms to ensure uniqueness across services or data centers  
 - Read more on this design decision here: [Why Distributed Systems Need Their Own Unique ID Generator](https://medium.com/@zell_dev/why-distributed-systems-need-their-own-unique-id-generator-38bd10bcbc97)
 
 ### 3.5 Common Service / Lib
-- Shared models, utils, config, and shard resolvers
+- Shared models, utils, configs, Redis setup, and shard resolver logic
+- `common-lib` holds entity definitions, Base62 and hash utilities
+- `common-service` includes shared infrastructure beans like:
+  - Shard resolver
+  - Redis config
+  - Multiple DataSource configurations
 
 ## 4. Data Flow
 
@@ -44,15 +52,20 @@ A distributed, read-optimized URL shortening system using Spring Boot microservi
 3. If miss, fallback to DB
 
 ## 5. Database Sharding
+- Shard selection is handled via a **HashBasedShardResolver** component.
+- We apply a **Murmur3 hash** on the generated numeric ID (before Base62 encoding), and use `hash % shardCount` to resolve which shard to use.
+- While this approach is static and hash-based, it is **extensible** to:
+  - Geographical routing
+  - User-group bucketing
 
-- 2–3 Postgres shards simulated via Docker
-- Shard selected using hash of short ID
-- Shard resolver utility in common-service
+> Note: For simplicity, this prototype uses **2 shards** and defines **2 separate repositories** (e.g., `ShortUrlRepositoryShard0`, `ShortUrlRepositoryShard1`) to write/read data accordingly.
+
 
 ## 6. Redis Caching
+- Shortened URL mappings are cached for fast resolution
+- TTL (Time-To-Live) and LRU (Least Recently Used) eviction strategy
+- Reduces load on databases and improves redirect latency
 
-- Shortened URL mappings are cached
-- LRU + TTL eviction strategy
 
 ## 7. Tech Stack
 
