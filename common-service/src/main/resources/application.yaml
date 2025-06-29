@@ -1,0 +1,7 @@
+sprint:
+  application:
+    name: common-service
+
+shortener:
+  shard:
+    count: 2
