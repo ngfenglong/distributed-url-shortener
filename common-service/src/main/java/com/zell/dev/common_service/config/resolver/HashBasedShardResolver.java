@@ -1,10 +1,12 @@
-package com.zell.dev.common_service.config;
+package com.zell.dev.common_service.config.resolver;
 
 import com.zell.dev.common_lib.util.HashUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class HashBasedShardResolver implements ShardResolver{
-    @Value("${shortener.shard.count}")
+    @Value("${sharding.count}")
     private int shardCount;
 
     @Override

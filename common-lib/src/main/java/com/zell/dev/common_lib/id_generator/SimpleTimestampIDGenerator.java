@@ -1,5 +1,8 @@
-package com.zell.dev.common_lib.util;
+package com.zell.dev.common_lib.id_generator;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class SimpleTimestampIDGenerator implements IDGenerator{
     private static final int MAX_SEQUENCE = 4095; // 12 bit -> 4096
 
