@@ -2,4 +2,24 @@ server:
   port: 8081
 spring:
   application:
-    name: "shorten-api""
+    name: "shorten-api"
+
+sharding:
+  count: 2
+  shards:
+    0:
+      url: jdbc:mysql://localhost:3307/shard0
+      username: root
+      password: root
+    1:
+      url: jdbc:mysql://localhost:3308/shard1
+      username: root
+      password: root
+#    0:
+#      url: ${SHARD_0_URL}
+#      username: ${SHARD_0_USERNAME}
+#      password: ${SHARD_0_PASSWORD}
+#    1:
+#      url: ${SHARD_1_URL}
+#      username: ${SHARD_1_USERNAME}
+#      password: ${SHARD_1_PASSWORD}
