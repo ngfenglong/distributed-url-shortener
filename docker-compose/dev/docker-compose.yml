@@ -1,25 +1,26 @@
+
 services:
+  url-db-shard-0:
+    image: mysql
+    container_name: urldb0
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: urldb0
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+     
   url-db-shard-1:
     image: mysql
     container_name: urldb1
     ports:
-      - 3307:3306
+      - 3308:3306
     environment:
       MYSQL_DATABASE: urldb1
     extends:
       file: common-config.yml
       service: microservice-db-config
-     
-  # url-db-shard-2:
-  #   image: mysql
-  #   container_name: urldb2
-  #   ports:
-  #     - 3308:3306
-  #   environment:
-  #     MYSQL_DATABASE: urldb2
-  #   extends:
-  #     file: common-config.yml
-  #     service: microservice-db-config
 
   redis:
     image: redis
@@ -33,67 +34,72 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
-  shorten-api: 
-    image: "zell1502/shorten-api:s1"
-    container_name: shorten-api
-    healthcheck:
-      test: "curl --fail --silent localhost:8081/actuator/health | grep UP || exit 1"
-      interval: 20s
-      timeout: 10s
-      retries: 20
-      start_period: 10s
-    ports:
-      - "8081:8081"
-    depends_on:
-      url-db-shard-1: 
-        condition: service_healthy 
-      redis: 
-        condition: service_healthy
-    environment:
-      SPRING_APPLICATION_NAME: "shorten-api"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://url-db-shard-1:3306/urlshortener"
-      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_DATA_REDIS_TIMEOUT: 1s
-
-  redirect-api:
-    image: "zell1502/redirect-api:s1"
-    container_name: redirect-api
-    healthcheck:
-      test: "curl --fail --silent localhost:8082/actuator/health | grep UP || exit 1"
-      interval: 20s
-      timeout: 10s
-      retries: 20
-      start_period: 10s
-    ports:
-      - "8082:8082"
-    depends_on:
-      url-db-shard-1: 
-        condition: service_healthy 
-      redis: 
-        condition: service_healthy
-    environment:
-      SPRING_APPLICATION_NAME: "redirect-api"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://url-db-shard-1:3306/urlshortener"
-      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_DATA_REDIS_TIMEOUT: 1s
+  shorten-api:
+     image: "zell1502/shorten-api:s1"
+     container_name: shorten-api
+     healthcheck:
+       test: "curl --fail --silent localhost:8081/actuator/health | grep UP || exit 1"
+       interval: 20s
+       timeout: 10s
+       retries: 20
+       start_period: 10s
+     ports:
+       - "8081:8081"
+     depends_on:
+       url-db-shard-1:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+     environment:
+        SPRING_APPLICATION_NAME: "shorten-api"
+#        SPRING_DATASOURCE_URL: "jdbc:mysql://url-db-shard-1:3306/urlshortener"
+        SPRING_DATA_REDIS_HOST: redis
+        SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+        SPRING_DATA_REDIS_PORT: 6379
+        SPRING_DATA_REDIS_TIMEOUT: 1s
+        SHARD_0_URL: jdbc:mysql://url-db-shard-0:3306/shard0
+        SHARD_0_USERNAME: root
+        SHARD_0_PASSWORD: root
+        SHARD_1_URL: jdbc:mysql://url-db-shard-1:3306/shard1
+        SHARD_1_USERNAME: root
+        SHARD_1_PASSWORD: root
+  # redirect-api:
+  #   image: "zell1502/redirect-api:s1"
+  #   container_name: redirect-api
+  #   healthcheck:
+  #     test: "curl --fail --silent localhost:8082/actuator/health | grep UP || exit 1"
+  #     interval: 20s
+  #     timeout: 10s
+  #     retries: 20
+  #     start_period: 10s
+  #   ports:
+  #     - "8082:8082"
+  #   depends_on:
+  #     url-db-shard-1: 
+  #       condition: service_healthy 
+  #     redis: 
+  #       condition: service_healthy
+  #   environment:
+  #     SPRING_APPLICATION_NAME: "redirect-api"
+  #     SPRING_DATASOURCE_URL: "jdbc:mysql://url-db-shard-1:3306/urlshortener"
+  #     SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+  #     SPRING_DATA_REDIS_HOST: redis
+  #     SPRING_DATA_REDIS_PORT: 6379
+  #     SPRING_DATA_REDIS_TIMEOUT: 1s
 
   
-  gateway-api:
-    image: "zell1502/gateway-api:s1"
-    container_name: gateway-api
-    ports:
-      - "8080:8080"
-    depends_on:
-      redirect-api:
-        condition: service_healthy 
-      shorten-api: 
-        condition: service_healthy
-    environment:
-      SPRING_APPLICATION_NAME: "gateway-api"
+  # gateway-api:
+  #   image: "zell1502/gateway-api:s1"
+  #   container_name: gateway-api
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     redirect-api:
+  #       condition: service_healthy 
+  #     shorten-api: 
+  #       condition: service_healthy
+  #   environment:
+  #     SPRING_APPLICATION_NAME: "gateway-api"
       
 
 

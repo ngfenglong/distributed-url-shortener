@@ -16,11 +16,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
 
-    microservice-configserver-config:
-      extends:
-        service: microservice-base-config
-      environment:
-        SPRING_PROFILES_ACTIVE: default
-        SPRING_DATASOURCE_USERNAME: root
-        SPRING_DATASOURCE_PASSWORD: root
-        
+  microservice-configserver-config:
+    extends:
+      service: microservice-base-config
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      
