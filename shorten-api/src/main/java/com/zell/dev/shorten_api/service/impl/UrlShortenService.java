@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UrlShortenService implements IUrlShortenService {
     private IDGenerator idGenerator;
-    private Base62Util base62Util;
     private HashBasedShardResolver hashBasedShardResolver;
     private ShardRepositoryRouterImpl shardRepositoryRouter;
 
@@ -28,7 +27,7 @@ public class UrlShortenService implements IUrlShortenService {
     public UrlShortenResponseDto shortenUrl(UrlShortenRequestDto requestDto) {
         // base64- > Generate aI
         long newId = idGenerator.nextId();
-        String encodedId = base62Util.encode(newId);
+        String encodedId = Base62Util.encode(newId);
 
         LocalDateTime currentDateTime = LocalDateTime.now();
 

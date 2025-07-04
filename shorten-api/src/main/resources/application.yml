@@ -4,15 +4,24 @@ spring:
   application:
     name: "shorten-api"
 
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  sql:
+    init:
+      mode: always
+
 sharding:
   count: 2
   shards:
     0:
-      url: jdbc:mysql://localhost:3307/shard0
+      url: jdbc:mysql://localhost:3307/urldb1
       username: root
       password: root
     1:
-      url: jdbc:mysql://localhost:3308/shard1
+      url: jdbc:mysql://localhost:3308/urldb2
       username: root
       password: root
 #    0:

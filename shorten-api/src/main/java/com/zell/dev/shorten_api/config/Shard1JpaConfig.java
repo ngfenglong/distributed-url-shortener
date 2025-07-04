@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.zell.dev.shorten.repository.shard1",
+        basePackages = "com.zell.dev.shorten_api.repository.shard1",
         entityManagerFactoryRef = "shard1EntityManagerFactory",
         transactionManagerRef = "shard1TransactionManager"
 )
