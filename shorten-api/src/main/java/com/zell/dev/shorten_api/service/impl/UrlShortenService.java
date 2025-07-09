@@ -12,16 +12,17 @@ import com.zell.dev.shorten_api.mapper.ShortUrlMapper;
 import com.zell.dev.shorten_api.repository.ShardRepositoryRouterImpl;
 import com.zell.dev.shorten_api.service.IUrlShortenService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UrlShortenService implements IUrlShortenService {
-    private IDGenerator idGenerator;
-    private HashBasedShardResolver hashBasedShardResolver;
-    private ShardRepositoryRouterImpl shardRepositoryRouter;
+    private final IDGenerator idGenerator;
+    private final HashBasedShardResolver hashBasedShardResolver;
+    private final ShardRepositoryRouterImpl shardRepositoryRouter;
 
     @Override
     public UrlShortenResponseDto shortenUrl(UrlShortenRequestDto requestDto) {
