@@ -2,7 +2,8 @@ server:
   port: 8082
 spring:
   application:
-    name: "redirect-api""  jpa:
+    name: "redirect-api"
+  jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
@@ -10,24 +11,25 @@ spring:
   sql:
     init:
       mode: always
-  sharding:
-    count: 2
-    shards:
-      0:
-        url: jdbc:mysql://localhost:3307/urldb1
-        username: root
-        password: root
-      1:
-        url: jdbc:mysql://localhost:3308/urldb2
-        username: root
-        password: root
-    #    0:
-    #      url: ${SHARD_0_URL}
-    #      username: ${SHARD_0_USERNAME}
-    #      password: ${SHARD_0_PASSWORD}
-    #    1:
-    #      url: ${SHARD_1_URL}
-    #      username: ${SHARD_1_USERNAME}
-    #      password: ${SHARD_1_PASSWORD}
+
+sharding:
+  count: 2
+  shards:
+    0:
+      url: jdbc:mysql://localhost:3307/urldb1
+      username: root
+      password: root
+    1:
+      url: jdbc:mysql://localhost:3308/urldb2
+      username: root
+      password: root
+  #    0:
+  #      url: ${SHARD_0_URL}
+  #      username: ${SHARD_0_USERNAME}
+  #      password: ${SHARD_0_PASSWORD}
+  #    1:
+  #      url: ${SHARD_1_URL}
+  #      username: ${SHARD_1_USERNAME}
+  #      password: ${SHARD_1_PASSWORD}
 
 

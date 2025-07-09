@@ -21,11 +21,6 @@ public class UrlRedirectController {
     public ResponseEntity<Void> redirectToOriginalUrl(@PathVariable String shortId) {
         String originalUrl = iUrlRedirectService.resolveOriginalUrl(shortId);
 
-        if(originalUrl != null){
-            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(originalUrl)).build();
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(originalUrl)).build();
     }
 }
