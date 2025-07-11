@@ -5,6 +5,9 @@ spring:
     name: "shorten-api"
 
   jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
@@ -16,19 +19,19 @@ spring:
 sharding:
   count: 2
   shards:
-    0:
-      url: jdbc:mysql://localhost:3307/urldb1
-      username: root
-      password: root
-    1:
-      url: jdbc:mysql://localhost:3308/urldb2
-      username: root
-      password: root
 #    0:
-#      url: ${SHARD_0_URL}
-#      username: ${SHARD_0_USERNAME}
-#      password: ${SHARD_0_PASSWORD}
+#      url: jdbc:mysql://localhost:3307/urldb0
+#      username: root
+#      password: root
 #    1:
-#      url: ${SHARD_1_URL}
-#      username: ${SHARD_1_USERNAME}
-#      password: ${SHARD_1_PASSWORD}
+#      url: jdbc:mysql://localhost:3308/urldb1
+#      username: root
+#      password: root
+    0:
+      url: ${SHARD_0_URL}
+      username: ${SHARD_0_USERNAME}
+      password: ${SHARD_0_PASSWORD}
+    1:
+      url: ${SHARD_1_URL}
+      username: ${SHARD_1_USERNAME}
+      password: ${SHARD_1_PASSWORD}

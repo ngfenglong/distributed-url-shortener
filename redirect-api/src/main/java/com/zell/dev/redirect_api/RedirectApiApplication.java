@@ -13,5 +13,4 @@ public class RedirectApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RedirectApiApplication.class, args);
 	}
-
 }

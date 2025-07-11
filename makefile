@@ -6,7 +6,8 @@ MAKEFILE_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 # BUILD SECTION
 ################################################################################
 
-build-all: build-shorten-api build-redirect-api build-gateway-server
+build-all: build-shorten-api build-redirect-api
+#build-gateway-server
 
 build-shorten-api: 
 	cd "$(MAKEFILE_DIR)/shorten-api" && mvn compile jib:dockerBuild
@@ -19,12 +20,12 @@ build-redirect-api:
 build-gateway-server:
 	cd "$(MAKEFILE_DIR)/gateway-server" && mvn compile jib:dockerBuild
 
-
 ################################################################################
 # DEPLOY SECTION
 ################################################################################
 
-deploy-all: deploy-shorten-api deploy-redirect-api deploy-gateway-server
+deploy-all: deploy-shorten-api deploy-redirect-api
+#deploy-gateway-server
 	
 deploy-shorten-api: 
 	docker push docker.io/zell1502/shorten-api:${version}
