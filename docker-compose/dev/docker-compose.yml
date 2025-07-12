@@ -54,7 +54,6 @@ services:
          condition: service_healthy
      environment:
         SPRING_APPLICATION_NAME: "shorten-api"
-#        SPRING_DATASOURCE_URL: "jdbc:mysql://url-db-shard-1:3306/urlshortener"
         SPRING_DATA_REDIS_HOST: redis
         SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
         SPRING_DATA_REDIS_PORT: 6379
@@ -89,7 +88,6 @@ services:
          condition: service_healthy
      environment:
        SPRING_APPLICATION_NAME: "redirect-api"
-#       SPRING_DATASOURCE_URL: "jdbc:mysql://url-db-shard-1:3306/urlshortener"
        SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
        SPRING_DATA_REDIS_HOST: redis
        SPRING_DATA_REDIS_PORT: 6379
@@ -105,18 +103,27 @@ services:
        service: network-deploy-service
 
   
-  # gateway-api:
-  #   image: "zell1502/gateway-api:s1"
-  #   container_name: gateway-api
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     redirect-api:
-  #       condition: service_healthy 
-  #     shorten-api: 
-  #       condition: service_healthy
-  #   environment:
-  #     SPRING_APPLICATION_NAME: "gateway-api"
+  gateway-api:
+     image: "zell1502/gateway-api:s1"
+     container_name: gateway-api
+     healthcheck:
+       test: "curl --fail --silent localhost:8080/actuator/health | grep UP || exit 1"
+       interval: 5s
+       timeout: 5s
+       retries: 20
+       start_period: 5s
+     ports:
+       - "8080:8080"
+     depends_on:
+       redirect-api:
+         condition: service_healthy
+       shorten-api:
+         condition: service_healthy
+     environment:
+       SPRING_APPLICATION_NAME: "gateway-api"
+     extends:
+       file: common-config.yml
+       service: network-deploy-service
 
 
 networks:
