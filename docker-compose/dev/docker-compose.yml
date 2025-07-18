@@ -52,6 +52,8 @@ services:
          condition: service_healthy
        redis:
          condition: service_healthy
+       eureka-server:
+         condition: service_healthy
      environment:
         SPRING_APPLICATION_NAME: "shorten-api"
         SPRING_DATA_REDIS_HOST: redis
@@ -64,6 +66,7 @@ services:
         SHARD_1_URL: jdbc:mysql://url-db-shard-1:3306/urldb1
         SHARD_1_USERNAME: root
         SHARD_1_PASSWORD: root
+        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
      extends:
         file: common-config.yml
         service: network-deploy-service
@@ -86,6 +89,8 @@ services:
          condition: service_healthy
        redis:
          condition: service_healthy
+       eureka-server:
+         condition: service_healthy
      environment:
        SPRING_APPLICATION_NAME: "redirect-api"
        SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
@@ -98,6 +103,7 @@ services:
        SHARD_1_USERNAME: root
        SHARD_1_URL: jdbc:mysql://url-db-shard-1:3306/urldb1
        SHARD_1_PASSWORD: root
+       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
      extends:
        file: common-config.yml
        service: network-deploy-service
@@ -121,9 +127,25 @@ services:
          condition: service_healthy
      environment:
        SPRING_APPLICATION_NAME: "gateway-api"
+       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
      extends:
        file: common-config.yml
        service: network-deploy-service
+
+  eureka-server:
+    image: "zell1502/eureka-server:s1"
+    container_name: eureka-server
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
 
 networks:

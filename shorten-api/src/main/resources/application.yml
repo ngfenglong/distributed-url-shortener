@@ -16,6 +16,15 @@ spring:
     init:
       mode: always
 
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
 sharding:
   count: 2
   shards:
@@ -35,3 +44,6 @@ sharding:
       url: ${SHARD_1_URL}
       username: ${SHARD_1_USERNAME}
       password: ${SHARD_1_PASSWORD}
+
+
+
