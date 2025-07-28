@@ -27,18 +27,11 @@ eureka:
 sharding:
   count: 2
   shards:
-#    0:
-#      url: jdbc:mysql://localhost:3307/urldb0
-#      username: root
-#      password: root
-#    1:
-#      url: jdbc:mysql://localhost:3308/urldb1
-#      username: root
-#      password: root
       0:
         url: ${SHARD_0_URL}
         username: ${SHARD_0_USERNAME}
         password: ${SHARD_0_PASSWORD}
+      password: root
       1:
         url: ${SHARD_1_URL}
         username: ${SHARD_1_USERNAME}

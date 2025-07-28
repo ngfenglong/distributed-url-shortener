@@ -1,23 +1,45 @@
 
 services:
-  url-db-shard-0:
+  url-db-shard-0-master:
     image: mysql
-    container_name: urldb0
+    container_name: url-db-0-master
     ports:
-      - 3307:3306
+      - "3307:3306"
     environment:
-      MYSQL_DATABASE: urldb0
+      MYSQL_DATABASE: url-db-0-master
     extends:
       file: common-config.yml
       service: microservice-db-config
-     
-  url-db-shard-1:
+
+  url-db-shard-0-replica:
     image: mysql
-    container_name: urldb1
+    container_name: url-db-0-replica
     ports:
-      - 3308:3306
+      - "3308:3306"
     environment:
-      MYSQL_DATABASE: urldb1
+      MYSQL_DATABASE: url-db-0-replica
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
+  url-db-shard-1-master:
+    image: mysql
+    container_name: url-db-1-master
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: url-db-1-master
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
+  url-db-shard-1-replica:
+    image: mysql
+    container_name: url-db-1-replica
+    ports:
+      - "3310:3306"
+    environment:
+      MYSQL_DATABASE: url-db-1-replica
     extends:
       file: common-config.yml
       service: microservice-db-config
@@ -46,9 +68,13 @@ services:
      ports:
        - "8081:8081"
      depends_on:
-       url-db-shard-0:
+       url-db-shard-0-master:
          condition: service_healthy
-       url-db-shard-1:
+       url-db-shard-0-replica:
+         condition: service_healthy
+       url-db-shard-1-master:
+         condition: service_healthy
+       url-db-shard-1-replica:
          condition: service_healthy
        redis:
          condition: service_healthy
@@ -60,12 +86,18 @@ services:
         SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
         SPRING_DATA_REDIS_PORT: 6379
         SPRING_DATA_REDIS_TIMEOUT: 1s
-        SHARD_0_URL: jdbc:mysql://url-db-shard-0:3306/urldb0
+        SHARD_0_URL: jdbc:mysql://url-db-shard-0-master:3306/url-db-0-master
         SHARD_0_USERNAME: root
         SHARD_0_PASSWORD: root
-        SHARD_1_URL: jdbc:mysql://url-db-shard-1:3306/urldb1
+        SHARD_0_URL_REPLICA: jdbc:mysql://url-db-shard-0-replica:3306/url-db-0-replica
+        SHARD_0_USERNAME_REPLICA: root
+        SHARD_0_PASSWORD_REPLICA: root
+        SHARD_1_URL: jdbc:mysql://url-db-shard-1-master:3306/url-db-1-master
         SHARD_1_USERNAME: root
         SHARD_1_PASSWORD: root
+        SHARD_1_URL_REPLICA: jdbc:mysql://url-db-shard-1-replica:3306/url-db-1-replica
+        SHARD_1_USERNAME_REPLICA: root
+        SHARD_1_PASSWORD_REPLICA: root
         EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
      extends:
         file: common-config.yml
@@ -83,9 +115,13 @@ services:
      ports:
        - "8082:8082"
      depends_on:
-       url-db-shard-0:
+       url-db-shard-0-master:
          condition: service_healthy
-       url-db-shard-1:
+       url-db-shard-0-replica:
+         condition: service_healthy
+       url-db-shard-1-master:
+         condition: service_healthy
+       url-db-shard-1-replica:
          condition: service_healthy
        redis:
          condition: service_healthy
@@ -97,12 +133,18 @@ services:
        SPRING_DATA_REDIS_HOST: redis
        SPRING_DATA_REDIS_PORT: 6379
        SPRING_DATA_REDIS_TIMEOUT: 1s
-       SHARD_0_URL: jdbc:mysql://url-db-shard-0:3306/urldb0
+       SHARD_0_URL: jdbc:mysql://url-db-shard-0-master:3306/url-db-0-master
        SHARD_0_USERNAME: root
        SHARD_0_PASSWORD: root
+       SHARD_0_URL_REPLICA: jdbc:mysql://url-db-shard-0-replica:3306/url-db-0-replica
+       SHARD_0_USERNAME_REPLICA: root
+       SHARD_0_PASSWORD_REPLICA: root
+       SHARD_1_URL: jdbc:mysql://url-db-shard-1-master:3306/url-db-1-master
        SHARD_1_USERNAME: root
-       SHARD_1_URL: jdbc:mysql://url-db-shard-1:3306/urldb1
        SHARD_1_PASSWORD: root
+       SHARD_1_URL_REPLICA: jdbc:mysql://url-db-shard-1-replica:3306/url-db-1-replica
+       SHARD_1_USERNAME_REPLICA: root
+       SHARD_1_PASSWORD_REPLICA: root
        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
      extends:
        file: common-config.yml
@@ -139,10 +181,10 @@ services:
       - "8070:8070"
     healthcheck:
       test: "curl --fail --silent localhost:8070/actuator/health | grep UP || exit 1"
-      interval: 20s
+      interval: 5s
       timeout: 5s
       retries: 20
-      start_period: 10s
+      start_period: 5s
     extends:
       file: common-config.yml
       service: network-deploy-service
