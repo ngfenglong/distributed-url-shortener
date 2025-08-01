@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -19,50 +17,51 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.zell.dev.redirect_api.repository.shard1",
-        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*\\.replica\\..*"),
-        entityManagerFactoryRef = "shard1EntityManagerFactory",
-        transactionManagerRef = "shard1TransactionManager"
+        basePackages = "com.zell.dev.redirect_api.repository.shard1.replica",
+        entityManagerFactoryRef = "shard1ReadReplicaEntityManagerFactory",
+        transactionManagerRef = "shard1ReadReplicaTransactionManager"
 )
-public class Shard1JpaConfig {
-    @Value("${sharding.shards.1.url}")
-    private String shard1Url;
+public class Shard1ReadReplicaJpaConfig {
+    @Value("${sharding.replicaShards.1.url}")
+    private String shard1ReplicaUrl;
 
-    @Value("${sharding.shards.1.username}")
-    private String shard1Username;
+    @Value("${sharding.replicaShards.0.username}")
+    private String shard1ReplicaUsername;
 
-    @Value("${sharding.shards.1.password}")
-    private String shard1Password;
+    @Value("${sharding.replicaShards.0.password}")
+    private String shard1ReplicaPassword;
 
 
-    @Bean(name = "shard1DataSource")
-    public DataSource shard1DataSource() {
+    @Bean(name = "shard1ReadReplicaDataSource")
+    public DataSource shard1ReadReplicaDataSource() {
         return DataSourceBuilder.create()
-                .url(shard1Url)
-                .username(shard1Username)
-                .password(shard1Password)
+                .url(shard1ReplicaUrl)
+                .username(shard1ReplicaUsername)
+                .password(shard1ReplicaPassword)
                 .build();
     }
 
-    @Bean(name = "shard1EntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean shard1EntityManagerFactory(
-            @Qualifier("shard1DataSource") DataSource dataSource
+    @Bean(name = "shard1ReadReplicaEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean shard1ReadReplicaEntityManagerFactory(
+            @Qualifier("shard1ReadReplicaDataSource") DataSource dataSource
     ) {
         var em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
 
         em.setPackagesToScan("com.zell.dev.common_lib.model");
-        em.setPersistenceUnitName("shard1");
+        em.setPersistenceUnitName("shard1Replica");
 
         var vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
+
         return em;
     }
 
-    @Bean(name = "shard1TransactionManager")
+    @Bean(name = "shard1ReadReplicaTransactionManager")
     public PlatformTransactionManager shard1TransactionManager(
-            @Qualifier("shard1EntityManagerFactory") EntityManagerFactory emf
+            @Qualifier("shard1ReadReplicaEntityManagerFactory") EntityManagerFactory emf
     ) {
         return new JpaTransactionManager(emf);
     }
 }
+
