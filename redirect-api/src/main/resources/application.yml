@@ -13,7 +13,7 @@ spring:
     show-sql: true
   sql:
     init:
-      mode: always
+      mode: never
 
 eureka:
   instance:
@@ -31,10 +31,25 @@ sharding:
         url: ${SHARD_0_URL}
         username: ${SHARD_0_USERNAME}
         password: ${SHARD_0_PASSWORD}
-      password: root
       1:
         url: ${SHARD_1_URL}
         username: ${SHARD_1_USERNAME}
         password: ${SHARD_1_PASSWORD}
+  replicaShards:
+    0:
+      url: ${SHARD_0_URL_REPLICA}
+      username: ${SHARD_0_USERNAME_REPLICA}
+      password: ${SHARD_0_PASSWORD_REPLICA}
+    1:
+      url: ${SHARD_1_URL_REPLICA}
+      username: ${SHARD_1_USERNAME_REPLICA}
+      password: ${SHARD_1_PASSWORD_REPLICA}
 
-
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info
+    endpoint:
+      health:
+        show-details: always
