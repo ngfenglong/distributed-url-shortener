@@ -31,7 +31,7 @@ public class UrlRedirectService implements IUrlRedirectService {
         }
 
         int shardId = hashBasedShardResolver.resolveShard(shortId);
-        ShortUrlRepository repo = shardRepositoryRouter.getRepositoryForShard(shardId);
+        ShortUrlRepository repo = shardRepositoryRouter.getReadRepositoryForShard(shardId);
 
         ShortUrl shortUrl = repo.findById(shortId).orElseThrow(() -> new ResourceNotFoundException(ShortUrl.class.getName(), shortId));
 

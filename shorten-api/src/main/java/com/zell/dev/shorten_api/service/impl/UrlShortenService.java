@@ -34,7 +34,7 @@ public class UrlShortenService implements IUrlShortenService {
 
         ShortUrl newShortUrl = new ShortUrl(encodedId, requestDto.getUrl(), currentDateTime, null, currentDateTime.plusMonths(1), true);
 
-        ShortUrlRepository selectedRepo = shardRepositoryRouter.getRepositoryForShard(hashBasedShardResolver.resolveShard(encodedId));
+        ShortUrlRepository selectedRepo = shardRepositoryRouter.getWriteRepositoryForShard(hashBasedShardResolver.resolveShard(encodedId));
         selectedRepo.save(newShortUrl);
 
         return ShortUrlMapper.mapToUrlShortenRequestDto(newShortUrl);
