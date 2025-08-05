@@ -9,17 +9,17 @@ MAKEFILE_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 build-all: build-shorten-api build-redirect-api build-gateway-server build-eureka-server
 
 build-shorten-api: 
-	cd "$(MAKEFILE_DIR)/shorten-api" && mvn compile jib:dockerBuild
+	cd "$(MAKEFILE_DIR)/shorten-api" && mvn clean compile jib:dockerBuild
 
 
 build-redirect-api:
-	cd "$(MAKEFILE_DIR)/redirect-api" && mvn compile jib:dockerBuild
+	cd "$(MAKEFILE_DIR)/redirect-api" && mvn clean compile jib:dockerBuild
 
 build-gateway-server:
-	cd "$(MAKEFILE_DIR)/gateway-server" && mvn compile jib:dockerBuild
+	cd "$(MAKEFILE_DIR)/gateway-server" && mvn clean compile jib:dockerBuild
 
 build-eureka-server:
-	cd "$(MAKEFILE_DIR)/eureka-server" && mvn compile jib:dockerBuild
+	cd "$(MAKEFILE_DIR)/eureka-server" && mvn clean compile jib:dockerBuild
 
 ################################################################################
 # DEPLOY SECTION
