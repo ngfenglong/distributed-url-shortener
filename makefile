@@ -6,11 +6,16 @@ MAKEFILE_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 # BUILD SECTION
 ################################################################################
 
-build-all: build-shorten-api build-redirect-api build-gateway-server build-eureka-server
+build-all: build-common-lib build-common-service build-shorten-api build-redirect-api build-gateway-server build-eureka-server
+
+build-common-lib:
+	cd "$(MAKEFILE_DIR)/common-lib" && mvn clean install -f pom.xml
+
+build-common-service:
+	cd "$(MAKEFILE_DIR)/common-service" && mvn clean install -f pom.xml
 
 build-shorten-api: 
 	cd "$(MAKEFILE_DIR)/shorten-api" && mvn clean compile jib:dockerBuild
-
 
 build-redirect-api:
 	cd "$(MAKEFILE_DIR)/redirect-api" && mvn clean compile jib:dockerBuild
