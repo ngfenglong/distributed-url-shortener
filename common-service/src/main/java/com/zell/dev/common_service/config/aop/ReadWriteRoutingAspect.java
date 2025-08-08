@@ -18,6 +18,7 @@ public class ReadWriteRoutingAspect {
     @Around("@annotation(readOnly)")
     public Object routeRead(ProceedingJoinPoint joinPoint, ReadOnly readOnly) throws Throwable {
         RoutingContext.setReadOnly();
+
         try {
             return joinPoint.proceed();
         } finally {
@@ -28,6 +29,7 @@ public class ReadWriteRoutingAspect {
     @Around("@annotation(writeOnly)")
     public Object routeWrite(ProceedingJoinPoint joinPoint, WriteOnly writeOnly) throws Throwable {
         RoutingContext.setWriteOnly();
+
         try {
             return joinPoint.proceed();
         } finally {
