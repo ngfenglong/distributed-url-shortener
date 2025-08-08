@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HashBasedShardResolver implements ShardResolver{
-    @Value("${sharding.count}")
+    @Value("${shard.count}")
     private int shardCount;
 
     @Override
