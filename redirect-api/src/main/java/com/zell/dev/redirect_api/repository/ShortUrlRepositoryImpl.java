@@ -1,8 +1,8 @@
-package com.zell.dev.redirect_api.repository.shard0;
+package com.zell.dev.redirect_api.repository;
 
 import com.zell.dev.common_lib.repository.ShortUrlRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Shard0ShortUrlRepository extends ShortUrlRepository {
+public interface ShortUrlRepositoryImpl extends ShortUrlRepository {
 }

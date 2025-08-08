@@ -14,6 +14,14 @@ spring:
   sql:
     init:
       mode: never
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info
+    endpoint:
+      health:
+        show-details: always
 
 eureka:
   instance:
@@ -24,32 +32,26 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
 
-sharding:
+
+shard:
   count: 2
-  shards:
-      0:
-        url: ${SHARD_0_URL}
-        username: ${SHARD_0_USERNAME}
-        password: ${SHARD_0_PASSWORD}
-      1:
-        url: ${SHARD_1_URL}
-        username: ${SHARD_1_USERNAME}
-        password: ${SHARD_1_PASSWORD}
-  replicaShards:
-    0:
-      url: ${SHARD_0_URL_REPLICA}
+  0:
+    jdbc-url: ${SHARD_0_URL}
+    username: ${SHARD_0_USERNAME}
+    password: ${SHARD_0_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    replica:
+      jdbc-url: ${SHARD_0_URL_REPLICA}
       username: ${SHARD_0_USERNAME_REPLICA}
       password: ${SHARD_0_PASSWORD_REPLICA}
-    1:
-      url: ${SHARD_1_URL_REPLICA}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  1:
+    jdbc-url: ${SHARD_1_URL}
+    username: ${SHARD_1_USERNAME}
+    password: ${SHARD_1_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    replica:
+      jdbc-url: ${SHARD_1_URL_REPLICA}
       username: ${SHARD_1_USERNAME_REPLICA}
       password: ${SHARD_1_PASSWORD_REPLICA}
-
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health,info
-    endpoint:
-      health:
-        show-details: always
+      driver-class-name: com.mysql.cj.jdbc.Driver

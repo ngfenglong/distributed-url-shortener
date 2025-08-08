@@ -2,8 +2,10 @@ package com.zell.dev.redirect_api.service.impl;
 
 import com.zell.dev.common_lib.model.ShortUrl;
 import com.zell.dev.common_lib.repository.ShortUrlRepository;
+import com.zell.dev.common_service.config.annotation.ReadOnly;
 import com.zell.dev.common_service.config.repository.ShardRepositoryRouter;
 import com.zell.dev.common_service.config.resolver.HashBasedShardResolver;
+import com.zell.dev.common_service.config.routing.RoutingContext;
 import com.zell.dev.redirect_api.exception.ResourceNotFoundException;
 import com.zell.dev.redirect_api.service.IUrlRedirectService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,10 @@ import java.time.Duration;
 public class UrlRedirectService implements IUrlRedirectService {
     private final RedisTemplate<String, String> redisTemplate;
     private final HashBasedShardResolver hashBasedShardResolver;
-    private final ShardRepositoryRouter shardRepositoryRouter;
+    private final ShortUrlRepository repository;
 
     @Override
+    @ReadOnly
     public String resolveOriginalUrl(String shortId) {
         String cacheUrl = redisTemplate.opsForValue().get(shortId);
 
@@ -31,9 +34,9 @@ public class UrlRedirectService implements IUrlRedirectService {
         }
 
         int shardId = hashBasedShardResolver.resolveShard(shortId);
-        ShortUrlRepository repo = shardRepositoryRouter.getReadRepositoryForShard(shardId);
+        RoutingContext.setShardId(shardId);
 
-        ShortUrl shortUrl = repo.findById(shortId).orElseThrow(() -> new ResourceNotFoundException(ShortUrl.class.getName(), shortId));
+        ShortUrl shortUrl = repository.findById(shortId).orElseThrow(() -> new ResourceNotFoundException(ShortUrl.class.getName(), shortId));
 
         log.info("Querying from repo" + shortUrl.getOriginalUrl());
         redisTemplate.opsForValue().set(shortId, shortUrl.getOriginalUrl(), Duration.ofHours(1));
