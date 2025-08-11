@@ -70,6 +70,7 @@ services:
     image: redis
     ports:
       - "6379:6379"
+    command: redis-server --maxmemory 16mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       timeout: 10s
@@ -87,8 +88,8 @@ services:
        timeout: 5s
        retries: 20
        start_period: 10s
-     ports:
-       - "8081:8081"
+#     ports:
+#       - "8081:8081"
      depends_on:
        url-db-shard-0-master:
          condition: service_healthy
@@ -134,8 +135,8 @@ services:
        timeout: 5s
        retries: 20
        start_period: 5s
-     ports:
-       - "8082:8082"
+#     ports:
+#       - "8082:8082"
      depends_on:
        shorten-api:
          condition: service_healthy

@@ -3,7 +3,6 @@ package com.zell.dev.redirect_api.service.impl;
 import com.zell.dev.common_lib.model.ShortUrl;
 import com.zell.dev.common_lib.repository.ShortUrlRepository;
 import com.zell.dev.common_service.config.annotation.ReadOnly;
-import com.zell.dev.common_service.config.repository.ShardRepositoryRouter;
 import com.zell.dev.common_service.config.resolver.HashBasedShardResolver;
 import com.zell.dev.common_service.config.routing.RoutingContext;
 import com.zell.dev.redirect_api.exception.ResourceNotFoundException;

@@ -1,7 +1,10 @@
 package com.zell.dev.common_service.config.routing;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static com.zell.dev.common_lib.constants.GlobalConstant.*;
 
+@Slf4j
 public class RoutingContext {
     private static final ThreadLocal<String> OPERATION_TYPE = new ThreadLocal<>();
     private static final ThreadLocal<Integer> SHARD_ID = new ThreadLocal<>();
@@ -24,12 +27,12 @@ public class RoutingContext {
 
     public static String getRoutingKey() {
         if(SHARD_ID.get() == null || OPERATION_TYPE.get() == null) {
-            System.out.println("RoutingContext: NULL values - using default datasource");
+            log.warn("RoutingContext: NULL values - using default datasource");
             return null;
         }
 
         String routingKey = generateLookUpKey(SHARD_ID.get(), OPERATION_TYPE.get());
-        System.out.println("RoutingContext: Using routing key = " + routingKey);
+        log.info("RoutingContext: Using routing key = {}", routingKey);
 
         return generateLookUpKey(SHARD_ID.get(), OPERATION_TYPE.get());
     }
