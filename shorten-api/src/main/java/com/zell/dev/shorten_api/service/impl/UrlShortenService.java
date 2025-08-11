@@ -15,8 +15,11 @@ import com.zell.dev.shorten_api.service.IUrlShortenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.InvalidUrlException;
 
 import java.time.LocalDateTime;
+
+import static com.zell.dev.common_lib.util.UrlValidatorUtil.isValidUrl;
 
 @Slf4j
 @Service
@@ -29,6 +32,9 @@ public class UrlShortenService implements IUrlShortenService {
     @Override
     @WriteOnly
     public UrlShortenResponseDto shortenUrl(UrlShortenRequestDto requestDto) {
+        if (!isValidUrl(requestDto.getUrl())) {
+            throw new InvalidUrlException("Invalid URL format");
+        }
         long newId = idGenerator.nextId();
         String encodedId = Base62Util.encode(newId);
 
