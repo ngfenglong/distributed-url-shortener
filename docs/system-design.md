@@ -1,81 +1,38 @@
-# System Design: Distributed URL Shortener
+# Distributed URL Shortener — System Design
 
-## 1. Overview
+## Overview
+This project is a distributed URL shortener, built as a hands-on exploration of sharding, caching, and microservice patterns using Java, Spring Boot, and Docker. It is not production-grade, but demonstrates key distributed system concepts in a runnable, modular form.
 
-A distributed, read-optimized URL shortening system using Spring Boot microservices. Built to scale horizontally, support sharding, and handle high read throughput.
-
-## 2. Architecture Diagram
-
+## Architecture Diagram
 ![System Architecture](./system-architecture.png)
 
-## 3. Components
+This diagram illustrates how all major components interact:
+- **Gateway:** All client requests enter through the Gateway (Spring Cloud Gateway), which is the only externally exposed service. The Gateway routes traffic to backend services.
+- **Service Discovery:** The Gateway, Shorten API, and Redirect API are all registered with Eureka for dynamic service discovery.
+- **Microservices:** The system is split into a URL shortening API and a redirect API, each responsible for their respective business logic.
+- **Sharded Databases:** Both APIs interact with sharded MySQL databases (two shards, each with a master and a replica). Shard selection is handled by a hash-based resolver.
+- **Caching:** Redis is used to cache URL mappings, reducing database load and improving redirect speed.
+- **Internal-Only:** All services and databases except the Gateway are internal and not exposed to the outside world.
 
-### 3.1 Gateway Server
-- Routes requests to `/shorten/**` and `/r/**`
-- Handles basic routing and rate limiting
+## Key Implementation Details
+- **Hash-Based Sharding:** A Murmur3 hash of the short URL ID determines the database shard, ensuring even data distribution.
+- **AOP-Based Data Source Routing:** Custom annotations and aspect-oriented programming route reads to replicas and writes to masters.
+- **Shorten API:** Accepts long URLs, generates unique short IDs, stores mappings in the correct shard, and updates Redis.
+- **Redirect API:** Resolves short URLs, first checking Redis, then falling back to the database if needed. Results are cached for future requests.
+- **Health Checks:** All services expose health endpoints; Docker Compose waits for dependencies to be healthy before starting each service.
+- **Configuration:** Connection details, shard counts, and cache settings are externalized for easy adjustment.
 
-### 3.2 Shorten API
-- Accepts long URLs and generates short IDs
-- Writes to sharded database and updates Redis
+## Design Choices & Limitations
+- **Not Production-Grade:** The system omits authentication, advanced monitoring, and rate limiting to focus on core distributed data patterns.
+- **Simplicity:** The architecture is intentionally simple and easy to run locally, prioritizing clarity over completeness.
 
-### 3.3 Redirect API
-- High-read path for short URL resolution
-- Redis-first, DB fallback
-- Read-only DB access
+## What This Project Demonstrates
+- Practical use of sharding and caching in a microservice context
+- Clean separation of concerns between routing, business logic, and data access
+- Use of service discovery and containerization for local distributed systems
+- Engineering tradeoffs in building a demo-scale distributed backend
 
-### 3.4 ID Generator
-- ID generation logic is located in the `common-lib` module
-- Uses a **timestamp-based strategy** with sequence counter to prevent collisions
-- Designed to be simple and robust for single-instance generation
-- Can be extended to Redis-backed counters or Snowflake if needed
-- **Scalable design**: In the future, this can be upgraded to use Snowflake or similar distributed ID generation algorithms to ensure uniqueness across services or data centers  
-- Read more on this design decision here: [Why Distributed Systems Need Their Own Unique ID Generator](https://medium.com/@zell_dev/why-distributed-systems-need-their-own-unique-id-generator-38bd10bcbc97)
+---
 
-### 3.5 Common Service / Lib
-- Shared models, utils, configs, Redis setup, and shard resolver logic
-- `common-lib` holds entity definitions, Base62 and hash utilities
-- `common-service` includes shared infrastructure beans like:
-  - Shard resolver
-  - Redis config
-  - Multiple DataSource configurations
-
-## 4. Data Flow
-
-### Shortening Flow
-1. Client sends `POST /shorten` with a long URL
-2. Shorten API calls ID generator
-3. Writes to DB and Redis
-
-### Redirect Flow
-1. Client hits `GET /r/{shortId}`
-2. Redirect API checks Redis
-3. If miss, fallback to DB
-
-## 5. Database Sharding
-- Shard selection is handled via a **HashBasedShardResolver** component.
-- We apply a **Murmur3 hash** on the generated numeric ID (before Base62 encoding), and use `hash % shardCount` to resolve which shard to use.
-- While this approach is static and hash-based, it is **extensible** to:
-  - Geographical routing
-  - User-group bucketing
-
-> Note: For simplicity, this prototype uses **2 shards** and defines **2 separate repositories** (e.g., `ShortUrlRepositoryShard0`, `ShortUrlRepositoryShard1`) to write/read data accordingly.
-
-
-## 6. Redis Caching
-- Shortened URL mappings are cached for fast resolution
-- TTL (Time-To-Live) and LRU (Least Recently Used) eviction strategy
-- Reduces load on databases and improves redirect latency
-
-
-## 7. Tech Stack
-
-| Layer      | Technology           |
-|------------|----------------------|
-| API        | Spring Boot          |
-| Gateway    | Spring Cloud Gateway |
-| Caching    | Redis                |
-| DB         | MySQL (sharded) |
-| Infra      | Docker / Compose     |
-| Metrics    | Spring Actuator      |
 
 
